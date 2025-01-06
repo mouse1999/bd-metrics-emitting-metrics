@@ -1,6 +1,8 @@
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder;
+import com.amazonaws.services.cloudwatch.model.Dimension;
+import com.amazonaws.services.cloudwatch.model.MetricDatum;
 import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
 import com.amazonaws.services.cloudwatch.model.StandardUnit;
 
@@ -35,7 +37,21 @@ public class MetricsPublisher {
     public PutMetricDataRequest buildMetricDataRequest(final String metricName, final double value,
                                                         final StandardUnit unit) {
 
-        // TODO: implement
-        return null;
+        final Dimension environment = new Dimension()
+                .withName(MetricConstants.ENVIRONMENT)
+                .withValue(MetricConstants.ENVIRONMENT_NAME);
+
+
+        final MetricDatum datum = new MetricDatum()
+                .withMetricName(metricName)
+                .withUnit(unit)
+                .withValue(value)
+                .withDimensions(environment);
+
+        final PutMetricDataRequest request = new PutMetricDataRequest()
+                .withNamespace(MetricConstants.NAMESPACE)
+                .withMetricData(datum);
+
+        return request;
     }
 }
